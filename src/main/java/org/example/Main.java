@@ -28,11 +28,25 @@ public class Main {
         System.out.println("Value with key c: "+customHashMap.get("c"));
         System.out.println("Value with key d: "+customHashMap.get("d"));
         System.out.println("Value with key e: "+customHashMap.get("e"));
+        //пытаюсь запросить значение по несуществующему ключу
         System.out.println("Value with key vvv: "+customHashMap.get("vvv"));
 
+        //удаляем один элемент в списке
+        System.out.println();
+        System.out.println("delete a");
+        customHashMap.remove("a");
+        customHashMap.printTable();
+
+        //удаляем последний элемент из списка (при коллизии)
         System.out.println();
         System.out.println("delete c");
         customHashMap.remove("c");
+        customHashMap.printTable();
+
+        //удаляем первый элемент из списка (при коллизии)
+        System.out.println();
+        System.out.println("delete d");
+        customHashMap.remove("d");
         customHashMap.printTable();
     }
 }

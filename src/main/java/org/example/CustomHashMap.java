@@ -31,12 +31,17 @@ public class CustomHashMap <K, V> {
             if(table[index]==null){
                 table[index] = node;
             }else{
+                System.err.println("При добавлении ключа "+key+" возникла коллизия.");
                 //если в корзине (по индексу) что-то лежит, т.е возникла коллизия,
                 //то решаем ее с помощью метода цепочек (в корзине находится связный список)
                 HashNode bufNode = table[index];
+                //ищем последний элемент в списке
                 while (bufNode.hasNextNode()){
                     bufNode = bufNode.getNextNode();
                 }
+                //для элемента указываем кто для него предыдущий
+                node.setPrevNode(bufNode);
+                //указываем для последнего элемента в списке, кто теперь последний (кто следующий)
                 bufNode.setNextNode(node);
             }
         }
@@ -45,7 +50,7 @@ public class CustomHashMap <K, V> {
     public void printTable(){
         for(int i=0;i<table.length; i++){
             if(table[i]!=null) {
-                System.out.println("PrintTable || Index: "+i);
+                //System.out.println("PrintTable || Index: "+i);
                 table[i].printInformation();
             }
         }
@@ -55,7 +60,6 @@ public class CustomHashMap <K, V> {
         var hash = key.hashCode();
         //определяем индекс
         int index = (table.length-1) & hash;
-        //System.out.println("GET || Key: "+key+" || index: "+index);
         //в таблице нет такого индекса
         if(table[index]==null){
             return null;
@@ -99,31 +103,6 @@ public class CustomHashMap <K, V> {
         int index = (table.length - 1) & hash;
         var node = table[index];
         if (node != null) {
-            /*
-            var node = table[index];
-            var keyNode = node.getKey();
-            //если значение одно единственное
-            if(!node.hasNextNode()){
-                if(Objects.equals(keyNode, deleteKey)){
-                    table[index]=null;
-                }
-            }else{
-                HashNode previous = null;
-                HashNode nextNode = null;
-                HashNode findNode = null;
-
-                //пока не найдем нужный узел
-                while (!Objects.equals(keyNode, deleteKey)){
-                    findNode = node;
-                    node = findNode.getNextNode();
-                    keyNode = node.getKey();
-                }
-
-                System.out.println("Del");
-                findNode.printInformation();
-            }
-            */
-
                 var keyNode = node.getKey();
                 //если значение одно единственное
                 if (!node.hasNextNode()) {
@@ -133,24 +112,37 @@ public class CustomHashMap <K, V> {
                     }
                 } else {
                     //если значений несколько
-                    HashNode previous = null;
+                    //искомый элемент
                     HashNode<K, V> findNode = null;
+                    //ищем нужный узел в списке
                     while (node != null) {
                         keyNode = node.getKey();
+                        //если нашли нужный элемент (по значению)
                         if (Objects.equals(keyNode, deleteKey)) {
                             findNode = node;
                             break;
                         } else {
                             var buf = node;
-                            previous = buf;
                             node = buf.getNextNode();
                         }
                     }
-
+                    //если нашли нужный узел
                     if (findNode != null) {
-                        if (previous != null) {
-                            previous.setNextNode(findNode.getNextNode());
-                            findNode = null;
+                        //если удаляем элемент из списка коллизии (и не первый элемент)
+                        //если есть предыдущий элемент
+                        if (findNode.hasPrevNode()) {
+                            findNode.getPrevNode().setNextNode(findNode.getNextNode());
+                            //previous.setNextNode(findNode.getNextNode());
+                        }else {
+                            //ЗДЕСЬ НЕТ ПРЕДЫДУЩЕГО ЭЛЕМЕНТА
+                            //если удаляем первый элемент
+                            //если он имеет следующий элемент
+                            if(findNode.hasNextNode()) {
+                                //становится первым элементом
+                                findNode.getNextNode().setPrevNode(null);
+                                //первым в таблице
+                                table[index] = findNode.getNextNode();
+                            }
                         }
                     }
 

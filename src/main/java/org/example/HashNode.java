@@ -9,6 +9,8 @@ public class HashNode<K,V> {
     private V value;
     //ссылка на следующий узел
     private HashNode<K,V> next = null;
+    //ссылка на предыдущий
+    private HashNode<K,V> prev = null;
 
     HashNode(K _key, V _value){
         key = _key;
@@ -17,12 +19,11 @@ public class HashNode<K,V> {
     public int hash(){
         var hashKey = Objects.hashCode(key);
         var hashValue = Objects.hashCode(value);
-        int hash = hashKey ^ hashValue;
-        return  hash;
+        return  hashKey ^ hashValue;
     }
 
     public void printInformation(){
-        System.out.println("NODE || Key: "+key+"|| Value: "+value+"|| "+getCountNextNode());
+        System.out.println("NODE || Key: "+key+"|| Value: "+value+"|| Count next node: "+getCountNextNode());
         HashNode node = next;
         while (node!=null){
             System.out.println("NODE || Key: "+node.getKey()+"|| Value: "+node.getValue());
@@ -31,11 +32,12 @@ public class HashNode<K,V> {
         }
     }
 
+    public boolean hasPrevNode(){
+        return prev != null;
+    }
+
     public boolean hasNextNode(){
-        if(next==null)
-            return false;
-        else
-            return true;
+        return next != null;
     }
     private int getCountNextNode(){
         int count = 0;
@@ -50,9 +52,13 @@ public class HashNode<K,V> {
     public HashNode getNextNode(){
         return next;
     }
+    public HashNode getPrevNode(){return prev;}
     public void setNextNode(HashNode value){
         //System.out.println("Add next node");
         next = value;
+    }
+    public void setPrevNode(HashNode value){
+        prev = value;
     }
     public K getKey(){
         return key;
